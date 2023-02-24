@@ -4,10 +4,11 @@ version: '3'
 
 services:
 
-  vindecoder-easy:
-    image: httpd:2.4
+  vindecoder-server:
+    build: .
 #!!    restart: unless-stopped
     volumes:
+#FIXME: incorrect after git project creation
        - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
        - ./my-cgi.sh:/usr/local/apache2/cgi-bin/my-cgi.cgi:ro
     ports:
