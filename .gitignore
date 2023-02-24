@@ -1,0 +1,11 @@
+# Emacs backups
+*~
+\#*\#
+
+# empty directories
+!/**/.gitkeep
+
+/tmp
+
+# Docker local files
+.env
