@@ -37,6 +37,11 @@ echo CONTENT_LENGTH = $CONTENT_LENGTH
 
 echo '===================DEBUG======================='
 
+echo '===================EXPORTS======================='
+date
+export
+echo '===================END EXPORTS======================='
+
 cat > /tmp/body.txt
 
 echo 'BODY:'
