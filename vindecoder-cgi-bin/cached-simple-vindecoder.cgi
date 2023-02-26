@@ -11,47 +11,10 @@ set -f
 echo "Content-type: text/plain; charset=iso-8859-1"
 echo
 
-exec 2>&1
-
-echo CGI/1.0 test script report:
-echo
-
-echo argc is $#. argv is "$*".
-echo
-
-echo SERVER_SOFTWARE = $SERVER_SOFTWARE
-echo SERVER_NAME = $SERVER_NAME
-echo GATEWAY_INTERFACE = $GATEWAY_INTERFACE
-echo SERVER_PROTOCOL = $SERVER_PROTOCOL
-echo SERVER_PORT = $SERVER_PORT
-echo REQUEST_METHOD = $REQUEST_METHOD
-echo HTTP_ACCEPT = "$HTTP_ACCEPT"
-echo PATH_INFO = "$PATH_INFO"
-echo PATH_TRANSLATED = "$PATH_TRANSLATED"
-echo SCRIPT_NAME = "$SCRIPT_NAME"
-echo QUERY_STRING = "$QUERY_STRING"
-echo REMOTE_HOST = $REMOTE_HOST
-echo REMOTE_ADDR = $REMOTE_ADDR
-echo REMOTE_USER = $REMOTE_USER
-echo AUTH_TYPE = $AUTH_TYPE
-echo CONTENT_TYPE = $CONTENT_TYPE
-echo CONTENT_LENGTH = $CONTENT_LENGTH
-
-echo '===================DEBUG======================='
-
-echo '===================EXPORTS======================='
-date
-export
-echo '===================END EXPORTS======================='
-
-set -x
+#exec 2>&1
 
 _body_file_=$( mktemp --suffix=_body.txt )
 cat > ${_body_file_}
-
-echo 'BODY:'
-cat ${_body_file_}
-echo 'BODY END'
 
 _error_=false
 _error_message_=''
@@ -61,8 +24,6 @@ then
     _error_message_='Only PUT method is supported'
 fi
 
-
-echo '===================CALL VIN DECODER======================='
 if ! ${_error_}
 then
     # keep onlu alphanum characters from first line
@@ -71,14 +32,28 @@ then
     export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
     export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
 
-    decoded_vin=$( ${VINDECODER_EU_CLIENT} "${input_for_vin}" )
+    decoded_vin_stdout=$( mktemp -u --suffix=_stdout.txt )
+    decoded_vin_stderr=$( mktemp -u --suffix=_stderr.txt )
+
+    ${VINDECODER_EU_CLIENT} "${input_for_vin}" 1>${decoded_vin_stdout} 2>${decoded_vin_stderr}
     status=$?
+
+    if [[ ${status} -eq 0 ]]
+    then
+	cat ${decoded_vin_stdout}
+	_error_=false
+    else
+	_error_=true
+	_error_message_=$( cat ${decoded_vin_stderr} )
+    fi
+
+    rm -f ${decoded_vin_stdout} ${decoded_vin_stderr}
+	
 fi
-echo '===================CALL DONE======================='
+
 rm -f ${_body_file_}
 
 
-echo '===================FINAL OUT======================='
 if ${_error_}
 then
     echo "service_error_status: 1"
