@@ -11,6 +11,8 @@ set -f
 echo "Content-type: text/plain; charset=iso-8859-1"
 echo
 
+exec 2>&1
+
 echo CGI/1.0 test script report:
 echo
 
@@ -42,6 +44,8 @@ date
 export
 echo '===================END EXPORTS======================='
 
+set -x
+
 cat > /tmp/body.txt
 
 echo 'BODY:'
@@ -50,11 +54,24 @@ echo 'BODY END'
 
 _error_=false
 _error_message_=''
-if [[ "${REQUEST_METHOD}" != 'PUT' ]]
+if [[ "${REQUEST_METHOD}" != 'POST' ]]
 then
     _error_=true
     _error_message_='Only PUT method is supported'
 fi
+
+
+echo '===================CALL VIN DECODER======================='
+if ! ${_error_}
+then
+    export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
+    export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
+
+    decoded_vin=$( ${VINDECODER_EU_CLIENT} "${vin}" )
+    status=$?
+fi
+echo '===================CALL DONE======================='
+
 
 echo '===================FINAL OUT======================='
 if ${_error_}
