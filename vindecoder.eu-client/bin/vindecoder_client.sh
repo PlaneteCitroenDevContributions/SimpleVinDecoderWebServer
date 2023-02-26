@@ -72,7 +72,7 @@ get_vin_data_from_vin_decoder_eu ()
             then
                 # resulting json mentions an error
                 # TODO: manage these errors
-                echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat /tmp/vin.json )" 1>&2
+                echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat ${curl_out} )" 1>&2
             else
 		cp "${curl_out}" "${_vin_json_file_}"
                 cp "${_vin_json_file_}" "${cache_file_name}"
