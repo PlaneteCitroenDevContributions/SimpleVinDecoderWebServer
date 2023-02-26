@@ -1,7 +1,5 @@
 #! /bin/bash
 
-# $Id: videcoder_client.sh,v 1.3 2023/02/24 08:01:17 bibi Exp bibi $
-
 COMMAND="$0"
 
 : ${RUN_STATES_DIR:=/tmp}
