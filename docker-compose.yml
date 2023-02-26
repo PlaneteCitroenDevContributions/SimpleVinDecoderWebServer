@@ -19,7 +19,6 @@ services:
 
   setup-vindecoder-server:
     image: alpine
-    restart: unless-stopped
     volumes:
        - ./_cache_for_vindecoder.eu_/:/var/vindecoder.eu/cache/
     command:
