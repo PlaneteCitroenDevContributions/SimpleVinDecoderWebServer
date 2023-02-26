@@ -35,10 +35,27 @@ echo AUTH_TYPE = $AUTH_TYPE
 echo CONTENT_TYPE = $CONTENT_TYPE
 echo CONTENT_LENGTH = $CONTENT_LENGTH
 
-echo '=========================================='
+echo '===================DEBUG======================='
 
 cat > /tmp/body.txt
 
 echo 'BODY:'
 cat /tmp/body.txt
 echo 'BODY END'
+
+_error_=false
+_error_message_=''
+if [[ "${REQUEST_METHOD}" != 'PUT' ]]
+then
+    _error_=true
+    _error_message_='Only PUT method is supported'
+fi
+
+echo '===================FINAL OUT======================='
+if ${_error_}
+then
+    echo "service_error_status: 1"
+    echo "service_error_message: ${_error_message_}"
+else
+    echo "service_error_status: 0"
+fi
