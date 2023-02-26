@@ -8,7 +8,11 @@ services:
     volumes:
        - ./local-conf.d/:/usr/local/apache2/conf/local-conf.d/:ro
        - ./vindecoder-cgi-bin/:/usr/local/apache2/vindecoder-cgi-bin/:ro
+       - ./vindecoder_eu-client/:/usr/local/vindecoder_eu-client/:ro
     ports:
        - "9999:80"
     environment:
-       - SETUP=${SETUP:-"false"}
+       - VINDECODER_EU_CLIENT=${VINDECODER_EU_CLIENT:-/usr/local/vindecoder_eu-client/bin/vindecoder_client.sh}
+       - VINDECODER_EU_CREDENTIAL_FILE=${VINDECODER_EU_CREDENTIAL_FILE:-/usr/local/vindecoder_eu-client/etc/vindecoder.eu.credential.txt}
+       - TOTO=${TOTO:-titi2}
+
