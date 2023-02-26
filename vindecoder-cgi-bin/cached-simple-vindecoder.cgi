@@ -26,7 +26,7 @@ fi
 
 if ! ${_error_}
 then
-    # keep onlu alphanum characters from first line
+    # keep only alphanum characters from first line
     input_for_vin=$( head -1 ${_body_file_} | tr --complement --delete '[:alnum:]' )
 
     export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
@@ -53,7 +53,6 @@ fi
 
 rm -f ${_body_file_}
 
-
 if ${_error_}
 then
     echo "service_error_status: 1"
@@ -61,4 +60,3 @@ then
 else
     echo "service_error_status: 0"
 fi
-
