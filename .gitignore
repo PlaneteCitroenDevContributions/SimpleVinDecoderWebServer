@@ -9,3 +9,6 @@
 
 # Docker local files
 .env
+
+# credential files
+/vindecoder.eu.credential.txt
