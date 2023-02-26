@@ -7,8 +7,9 @@ services:
 #!!    restart: unless-stopped
     volumes:
 #FIXME: incorrect after git project creation
-       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-       - ./cgi-bin/:/usr/local/apache2/cgi-bin/:ro
+#       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+       - ./local-conf.d/:/usr/local/apache2/conf/local-conf.d/:ro
+       - ./vindecoder-cgi-bin/:/usr/local/apache2/vindecoder-cgi-bin/:ro
     ports:
        - "9999:80"
     environment:
