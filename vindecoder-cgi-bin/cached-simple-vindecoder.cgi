@@ -4,22 +4,6 @@
 # appropriate #!/path/to/sh shebang, and set this script executable
 # with chmod 755.
 #
-# ***** !!! WARNING !!! *****
-# This script echoes the server environment variables and therefore
-# leaks information - so NEVER use it in a live server environment!
-# It is provided only for testing purpose.
-# Also note that it is subject to cross site scripting attacks on
-# MS IE and any other browser which fails to honor RFC2616.
-
-# # TMP
-# if wich jq >/dev/null
-# then
-#     :
-# else
-#     apt-get update
-#     apt-get install -y jq
-# fi
-
 
 # disable filename globbing
 set -f
