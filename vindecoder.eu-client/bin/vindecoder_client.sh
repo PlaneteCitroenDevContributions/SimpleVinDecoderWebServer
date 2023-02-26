@@ -20,6 +20,7 @@ get_vin_data_from_vin_decoder_eu ()
     cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
 
     _tmp_dir_=$( mktemp --directory )
+
     _vin_json_file_="${_tmp_dir_}/vin.json"
 
     if [[ -r "${cache_file_name}" ]]
