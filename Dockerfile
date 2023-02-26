@@ -3,7 +3,7 @@ FROM httpd:2.4
 RUN apt-get update \
     && \
     apt-get -y install \
-       curl jq \
+       curl ca-certificates jq \
     && \
     apt-get clean
 
