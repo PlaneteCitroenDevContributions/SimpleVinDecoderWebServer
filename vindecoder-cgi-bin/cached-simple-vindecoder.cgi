@@ -46,10 +46,11 @@ echo '===================END EXPORTS======================='
 
 set -x
 
-cat > /tmp/body.txt
+_body_file_=$( mktemp --suffix=_body.txt )
+cat > ${_body_file_}
 
 echo 'BODY:'
-cat /tmp/body.txt
+cat ${_body_file_}
 echo 'BODY END'
 
 _error_=false
@@ -64,6 +65,8 @@ fi
 echo '===================CALL VIN DECODER======================='
 if ! ${_error_}
 then
+    vin=$( head -1 ${_body_file_} )
+
     export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
     export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
 
@@ -71,6 +74,7 @@ then
     status=$?
 fi
 echo '===================CALL DONE======================='
+rm -f ${_body_file_}
 
 
 echo '===================FINAL OUT======================='
@@ -81,3 +85,4 @@ then
 else
     echo "service_error_status: 0"
 fi
+
