@@ -10,10 +10,36 @@ then
     exit 1
 fi
 
+if [[ -r "${VINDECODER_EU_CREDENTIAL_FILE}" ]]
+then
+
+    credential_file_effective_content=$(
+	sed -e '/^[ \t]*#/d' "${VINDECODER_EU_CREDENTIAL_FILE}"
+				     )
+
+    VINDECODER_EU_APIKEY=$(
+	grep 'vindecoder.eu_apikey' <<< "${credential_file_effective_content}" | cut -d '=' -f 2 | tr -d ' '
+			)
+
+    VINDECODER_EU_SECRETKEY=$(
+	grep 'vindecoder.eu_secretkey' <<< "${credential_file_effective_content}" | cut -d '=' -f 2 | tr -d ' '
+			   )
+   
+fi
+   
+if [[ -z "${VINDECODER_EU_APIKEY}" -o -z "${VINDECODER_EU_SECRETKEY}" ]]
+then      
+    echo "${COMMAND}: ERROR. Vindecoder.eu apikey or secretkey not provided" 1>&2
+    exit 1
+fi
+    
+
+apikey="${VINDECODER_EU_APIKEY}"
+secretkey="${VINDECODER_EU_SECRET}"
+	
 get_vin_data_from_vin_decoder_eu ()
 {
     vin="$1"
-    vin_fieldlist_file_name="$2"
 
     cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
 
