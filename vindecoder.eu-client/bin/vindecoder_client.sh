@@ -63,7 +63,7 @@ get_vin_data_from_vin_decoder_eu ()
         url="${apiPrefix}/${apikey}/${controlsum}/${id}/${vin}.json"
 
         curl_out="${_tmp_dir_}/curl_out.txt"
-        curl_http_code=$( curl -s -o "${curl_out}" -w "%{http_code}" "${url}" )
+        curl_http_code=$( curl --insecure -s -o "${curl_out}" -w '%{http_code}' "${url}" )
         if [ "${curl_http_code}" -eq 200 ]
         then
             # "Got 200! All done!"
