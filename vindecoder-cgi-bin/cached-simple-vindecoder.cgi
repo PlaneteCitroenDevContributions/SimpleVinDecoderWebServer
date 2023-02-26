@@ -71,7 +71,7 @@ then
     export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
     export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
 
-    decoded_vin=$( bash -x ${VINDECODER_EU_CLIENT} "${input_for_vin}" )
+    decoded_vin=$( ${VINDECODER_EU_CLIENT} "${input_for_vin}" )
     status=$?
 fi
 echo '===================CALL DONE======================='
