@@ -65,12 +65,13 @@ fi
 echo '===================CALL VIN DECODER======================='
 if ! ${_error_}
 then
-    vin=$( head -1 ${_body_file_} )
+    # keep onlu alphanum characters from first line
+    input_for_vin=$( head -1 ${_body_file_} | tr --complement --delete '[:alnum:]' )
 
     export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
     export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
 
-    decoded_vin=$( ${VINDECODER_EU_CLIENT} "${vin}" )
+    decoded_vin=$( bash -x ${VINDECODER_EU_CLIENT} "${input_for_vin}" )
     status=$?
 fi
 echo '===================CALL DONE======================='
