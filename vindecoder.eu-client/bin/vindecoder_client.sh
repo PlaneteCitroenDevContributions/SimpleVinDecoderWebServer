@@ -27,16 +27,12 @@ then
    
 fi
    
-if [[ -z "${VINDECODER_EU_APIKEY}" -o -z "${VINDECODER_EU_SECRETKEY}" ]]
+if [[ -z "${VINDECODER_EU_APIKEY}" && -z "${VINDECODER_EU_SECRETKEY}" ]]
 then      
     echo "${COMMAND}: ERROR. Vindecoder.eu apikey or secretkey not provided" 1>&2
     exit 1
 fi
     
-
-apikey="${VINDECODER_EU_APIKEY}"
-secretkey="${VINDECODER_EU_SECRET}"
-	
 get_vin_data_from_vin_decoder_eu ()
 {
     vin="$1"
@@ -56,7 +52,7 @@ get_vin_data_from_vin_decoder_eu ()
 
         apiPrefix="https://api.vindecoder.eu/3.2"
         apikey="${VINDECODER_EU_APIKEY}"
-        secretkey="${VINDECODER_EU_SECRET}"
+        secretkey="${VINDECODER_EU_SECRETKEY}"
         id="decode"
 
         key="${vin}|${id}|${apikey}|${secretkey}"
