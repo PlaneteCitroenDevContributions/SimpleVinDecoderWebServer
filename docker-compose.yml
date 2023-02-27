@@ -15,7 +15,7 @@ services:
       expose:
          - 80
       ports:
-         - "9999:80"
+         - "${PUBLIC_PORT:-10280}:80"
       environment:
          - VINDECODER_EU_CLIENT=/usr/local/vindecoder.eu-client/bin/vindecoder_client.sh
          - VINDECODER_EU_CREDENTIAL_FILE=/usr/local/vindecoder.eu-client/etc/vindecoder.eu.credential.txt
