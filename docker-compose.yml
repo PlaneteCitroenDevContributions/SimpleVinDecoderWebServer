@@ -4,28 +4,36 @@ version: '3'
 
 services:
 
-  vindecoder-server:
-    build: .
-    restart: unless-stopped
-    volumes:
-       - ./local-conf.d/:/usr/local/apache2/conf/local-conf.d/:ro
-       - ./vindecoder-cgi-bin/:/usr/local/apache2/vindecoder-cgi-bin/:ro
-       - ./vindecoder.eu-client/:/usr/local/vindecoder.eu-client/:ro
-       - ./_cache_for_vindecoder.eu_/:/var/vindecoder.eu/cache/
-    expose:
-       - 80
-    ports:
-       - "9999:80"
-    environment:
-       - VINDECODER_EU_CLIENT=/usr/local/vindecoder.eu-client/bin/vindecoder_client.sh
-       - VINDECODER_EU_CREDENTIAL_FILE=/usr/local/vindecoder.eu-client/etc/vindecoder.eu.credential.txt
-       - VINDECODER_EU_CACHE_DIR=/var/vindecoder.eu/cache
+   vindecoder-server:
+      build: .
+      restart: unless-stopped
+      volumes:
+         - ./local-conf.d/:/usr/local/apache2/conf/local-conf.d/:ro
+         - ./vindecoder-cgi-bin/:/usr/local/apache2/vindecoder-cgi-bin/:ro
+         - ./vindecoder.eu-client/:/usr/local/vindecoder.eu-client/:ro
+         - ./_cache_for_vindecoder.eu_/:/var/vindecoder.eu/cache/
+      expose:
+         - 80
+      ports:
+         - "9999:80"
+      environment:
+         - VINDECODER_EU_CLIENT=/usr/local/vindecoder.eu-client/bin/vindecoder_client.sh
+         - VINDECODER_EU_CREDENTIAL_FILE=/usr/local/vindecoder.eu-client/etc/vindecoder.eu.credential.txt
+         - VINDECODER_EU_CACHE_DIR=/var/vindecoder.eu/cache
+      networks:
+         - internal_services
 
-  setup-vindecoder-server:
-    image: alpine
-    volumes:
-       - ./_cache_for_vindecoder.eu_/:/var/vindecoder.eu/cache/
-    command:
-       - /bin/sh
-       - -c
-       - 'set -x; chmod 777 /var/vindecoder.eu/cache/'
+   setup-vindecoder-server:
+      image: alpine
+      volumes:
+         - ./_cache_for_vindecoder.eu_/:/var/vindecoder.eu/cache/
+      command:
+         - /bin/sh
+         - -c
+         - 'set -x; chmod 777 /var/vindecoder.eu/cache/'
+
+networks:
+
+   internal_services:
+      external: true
+      name: internal_services
