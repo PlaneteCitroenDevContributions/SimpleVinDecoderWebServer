@@ -37,29 +37,34 @@ get_vin_data_from_vin_decoder_eu ()
 {
     vin="$1"
 
-    vin_generic_part="${vin:0:10}"
+    _tmp_dir_=$( mktemp --directory )
 
-    car_with_same_generic_vin=$( ls -1 "${RUN_STATES_DIR}/cache_data_vin_${vin_generic_part}"*.json 2>/dev/null| head -1 )
+    _vin_json_file_="${_tmp_dir_}/vin.json"
 
-    if [[ -n "${car_with_same_generic_vin}" ]]
+    # Check is file is already in cache
+    cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
+    if [[ -r "${cache_file_name}" ]]
     then
-
-	_vin_json_file_="${car_with_same_generic_vin}"
-
+	
+	# use cached file
+        cp "${cache_file_name}" "${_vin_json_file_}"
+	
     else
 
-	cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
+	# try to search for a car with same vin prefix
+	vin_generic_part="${vin:0:10}"
+	
+	car_with_same_generic_vin=$( ls -1 "${RUN_STATES_DIR}/cache_data_vin_${vin_generic_part}"*.json 2>/dev/null| head -1 )
 
-	_tmp_dir_=$( mktemp --directory )
-
-	_vin_json_file_="${_tmp_dir_}/vin.json"
-
-	if [[ -r "${cache_file_name}" ]]
+	if [[ -n "${car_with_same_generic_vin}" ]]
 	then
-            cp "${cache_file_name}" "${_vin_json_file_}"
+
+	    # use same car
+	    cp "${car_with_same_generic_vin}" "${_vin_json_file_}"
+
 	else
 
-            # try to get VIN
+            # try to get VIN from provider
 
             apiPrefix="https://api.vindecoder.eu/3.2"
             apikey="${VINDECODER_EU_APIKEY}"
@@ -92,6 +97,7 @@ get_vin_data_from_vin_decoder_eu ()
 		echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
             fi
 	fi
+
     fi
 
     exit_code=-1
@@ -104,6 +110,7 @@ get_vin_data_from_vin_decoder_eu ()
     fi
 
     rm -rf "${_tmp_dir_}"
+
     return ${exit_code}
 }
 
