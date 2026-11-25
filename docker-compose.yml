@@ -1,5 +1,3 @@
-# -*- mode: indented-text; tab-width: 3; indent-tabs-mode: nil -*-
-
 services:
 
    simple-vindecoder-server:
