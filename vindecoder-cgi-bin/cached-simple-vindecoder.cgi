@@ -28,7 +28,7 @@ do
 	    ;;
 	*)
 	    echo "Skipped query arg ${query_arg}" 1>&2
-	    ::
+	    ;;
     esac
 done
 
@@ -44,19 +44,19 @@ export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
 decoded_vin_stdout=$( mktemp -u --suffix=_stdout.txt )
 decoded_vin_stderr=$( mktemp -u --suffix=_stderr.txt )
 
-${VINDECODER_EU_CLIENT} "${input_for_vin}" 1>${decoded_vin_stdout} 2>${decoded_vin_stderr}
+${VINDECODER_EU_CLIENT} "${vin}" 1>${decoded_vin_stdout} 2>${decoded_vin_stderr}
 status=$?
 
 if [[ ${status} -eq 0 ]]
 then
-    _error_=true
-else
     _error_=false
+else
+    _error_=true
 fi
 
 if ${_error_}
 then
-    :
+    cat ${decoded_vin_stderr} 1>&2
 else
     cat ${decoded_vin_stdout}
 fi
