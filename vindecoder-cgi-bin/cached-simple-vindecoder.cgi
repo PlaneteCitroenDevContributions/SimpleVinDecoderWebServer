@@ -17,6 +17,28 @@ env 1>&2
 _body_file_=$( mktemp --suffix=_body.txt )
 cat > ${_body_file_}
 
+
+_oldIFS="${IFS}"
+IFS='&'
+set -- ${QUERY_STRING}
+query_string_array=( "$@" )
+IFS="${_oldIFS}"
+
+set -x
+for query_arg in "${query_string_array[@]}"
+do
+    case "${query_arg}" in
+	[Vv][Ii][Nn]=*)
+	    vin="${query_arg:4}"
+	    ;;
+	*)
+	    echo "Skipped query arg ${query_arg}" 1>&2
+	    ::
+    esac
+done
+set +x
+
+
 _error_=false
 _error_message_=''
 if [[ "${REQUEST_METHOD}" != 'POST' ]]
