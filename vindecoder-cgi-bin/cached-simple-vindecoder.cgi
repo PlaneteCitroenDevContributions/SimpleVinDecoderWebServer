@@ -14,17 +14,12 @@ echo
 #exec 2>&1
 env 1>&2
 
-_body_file_=$( mktemp --suffix=_body.txt )
-cat > ${_body_file_}
-
-
 _oldIFS="${IFS}"
 IFS='&'
 set -- ${QUERY_STRING}
 query_string_array=( "$@" )
 IFS="${_oldIFS}"
 
-set -x
 for query_arg in "${query_string_array[@]}"
 do
     case "${query_arg}" in
@@ -36,50 +31,41 @@ do
 	    ::
     esac
 done
-set +x
 
+if [[ -z "${vin}" ]]
+then
+    # VIN argument is not provided
+    exit 1
+fi
 
-_error_=false
-_error_message_=''
-if [[ "${REQUEST_METHOD}" != 'POST' ]]
+export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
+export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
+
+decoded_vin_stdout=$( mktemp -u --suffix=_stdout.txt )
+decoded_vin_stderr=$( mktemp -u --suffix=_stderr.txt )
+
+${VINDECODER_EU_CLIENT} "${input_for_vin}" 1>${decoded_vin_stdout} 2>${decoded_vin_stderr}
+status=$?
+
+if [[ ${status} -eq 0 ]]
 then
     _error_=true
-    _error_message_='Only PUT method is supported'
+else
+    _error_=false
 fi
-
-if ! ${_error_}
-then
-    # keep only alphanum characters from first line
-    input_for_vin=$( head -1 ${_body_file_} | tr --complement --delete '[:alnum:]' )
-
-    export RUN_STATES_DIR="${VINDECODER_EU_CACHE_DIR}"
-    export VINDECODER_EU_CREDENTIAL_FILE="${VINDECODER_EU_CREDENTIAL_FILE}"
-
-    decoded_vin_stdout=$( mktemp -u --suffix=_stdout.txt )
-    decoded_vin_stderr=$( mktemp -u --suffix=_stderr.txt )
-
-    ${VINDECODER_EU_CLIENT} "${input_for_vin}" 1>${decoded_vin_stdout} 2>${decoded_vin_stderr}
-    status=$?
-
-    if [[ ${status} -eq 0 ]]
-    then
-	cat ${decoded_vin_stdout}
-	_error_=false
-    else
-	_error_=true
-	_error_message_=$( cat ${decoded_vin_stderr} )
-    fi
-
-    rm -f ${decoded_vin_stdout} ${decoded_vin_stderr}
-	
-fi
-
-rm -f ${_body_file_}
 
 if ${_error_}
 then
-    echo "service_error_status: 1"
-    echo "service_error_message: ${_error_message_}"
+    :
 else
-    echo "service_error_status: 0"
+    cat ${decoded_vin_stdout}
+fi
+
+rm -f ${decoded_vin_stdout} ${decoded_vin_stderr}
+	
+if ${_error_}
+then
+    exit 1
+else
+    exit 0
 fi
