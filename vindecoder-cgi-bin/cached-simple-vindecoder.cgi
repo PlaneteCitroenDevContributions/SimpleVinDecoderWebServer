@@ -8,10 +8,11 @@
 # disable filename globbing
 set -f
 
-echo "Content-type: text/plain; charset=iso-8859-1"
+echo 'Content-type: content-type: application/json'
 echo
 
 #exec 2>&1
+env 1>&2
 
 _body_file_=$( mktemp --suffix=_body.txt )
 cat > ${_body_file_}
